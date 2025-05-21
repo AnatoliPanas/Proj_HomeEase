@@ -3,6 +3,7 @@ version: '3'
 services:
   dbMySQL:
     image: mysql:latest
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DB}
