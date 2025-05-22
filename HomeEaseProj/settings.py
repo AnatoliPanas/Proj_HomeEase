@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from environ import Env
 
-import applications.users.apps
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,9 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # 3-rd party
+    'rest_framework',
 
     # local
     'applications.users.apps.UsersConfig',
+    'applications.rent.apps.RentConfig',
 
 ]
 
