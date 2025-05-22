@@ -26,6 +26,7 @@ class AddressCreateSerializer(serializers.ModelSerializer):
 
 class RentDetailSerializer(serializers.ModelSerializer):
     address = AddressListSerializer(read_only=True, allow_null=True)
+    owner = serializers.StringRelatedField(read_only=True)
 
     # address = serializers.StringRelatedField()
     # address = serializers.SlugRelatedField(
@@ -43,7 +44,8 @@ class RentDetailSerializer(serializers.ModelSerializer):
             'rooms_count',
             'room_type',
             'is_active',
-            'created_at'
+            'created_at',
+            'owner'
         ]
 
 

@@ -1,15 +1,17 @@
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import status, filters
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import (ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      get_object_or_404,
                                      RetrieveAPIView,
                                      ListAPIView)
-from rest_framework.permissions import SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from applications.permissions.owner_permissions import IsOwnerOrReadOnly
 from applications.rent.models.locations import Address
 from applications.rent.models.rent import Rent
 from applications.rent.serializers import (RentListSerializer,
@@ -23,6 +25,7 @@ from applications.rent.serializers import (RentListSerializer,
 
 class AddressListCreateGenericAPIView(ListCreateAPIView):
     queryset = Address.objects.all()
+    permission_classes = [AllowAny]
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
@@ -39,25 +42,27 @@ class AddressListCreateGenericAPIView(ListCreateAPIView):
     search_fields = ['country', 'city', 'street']
     ordering_fields = ['created_at']
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class RentListCreateGenericAPIView(ListCreateAPIView):
     queryset = Rent.objects.all()
+    permission_classes = [IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return RentListSerializer
         return RentCreateSerializer
 
-
-class TestRentDetailUpdateDeleteGenericAPIView(RetrieveAPIView):
-    queryset = Rent.objects.all()
-    lookup_url_kwarg = 'rent_id'
-    serializer_class = RentDetailSerializer
-
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class RentDetailUpdateDeleteGenericAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Rent.objects.all()
+    permission_classes = [IsOwnerOrReadOnly]
     lookup_url_kwarg = 'rent_id'
+
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:

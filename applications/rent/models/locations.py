@@ -1,5 +1,7 @@
 from django.db import models
 
+from applications.users.models import User
+
 
 class Address(models.Model):
     country = models.CharField(max_length=64)
@@ -22,6 +24,14 @@ class Address(models.Model):
             ],
                 name='unique_address_with_apartment')
         ]
+
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='rents'
+    )
 
     def __str__(self):
         parts = [self.city, self.street, self.house_number]
