@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from applications.users.models import User
+from applications.users.models.user import User
 from applications.users.serializers import RegisterUserSerializer, UserListSerializer
 
 class RegisterUserAPIView(ListCreateAPIView):

@@ -6,7 +6,7 @@ from django.core.validators import validate_email
 from rest_framework import serializers
 
 from applications.users.choices.role_type import RoleType
-from applications.users.models import User
+from applications.users.models.user import User
 
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
