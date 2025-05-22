@@ -50,6 +50,10 @@ class RentDetailSerializer(serializers.ModelSerializer):
 
 
 class RentListSerializer(serializers.ModelSerializer):
+    address = serializers.StringRelatedField(read_only=True)
+
+    owner = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         model = Rent
         fields = '__all__'

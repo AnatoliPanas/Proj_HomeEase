@@ -11,6 +11,7 @@ from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticatedOr
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from applications.filters.filter_rent import RentFilter
 from applications.permissions.owner_permissions import IsOwnerOrReadOnly
 from applications.rent.models.locations import Address
 from applications.rent.models.rent import Rent
@@ -50,6 +51,16 @@ class RentListCreateGenericAPIView(ListCreateAPIView):
     queryset = Rent.objects.all()
     permission_classes = [IsOwnerOrReadOnly]
 
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    filterset_class = RentFilter
+    search_fields = ['title', 'description']
+    ordering_fields = ['price', 'created_at']
+
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return RentListSerializer
@@ -58,11 +69,11 @@ class RentListCreateGenericAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+
 class RentDetailUpdateDeleteGenericAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Rent.objects.all()
     permission_classes = [IsOwnerOrReadOnly]
     lookup_url_kwarg = 'rent_id'
-
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
